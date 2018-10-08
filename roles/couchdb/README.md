@@ -1,22 +1,27 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Couchdb role to setup either standalone couchdb server or multinode couchdb cluster.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+There is no dependency for this role. It use apt to install couchdb so no additional requirements.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+This role is very straight forward. So, not many user inputs are needed. Still you can override the value of the following variables -
+
+	cluster_setup: True
+	admin_password: "superpass"
+	cluster_cookie: "supersecret"
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+No dependency on any other role.
+
 
 Example Playbook
 ----------------
@@ -31,9 +36,9 @@ Including an example of how to use your role (for instance, with variables passe
 
 Inventory file should be like this -
 
-[couchdb]
-178.62.208.95
-178.62.215.113
+	[couchdb]
+	178.62.208.95
+	178.62.215.113
 
 
 
