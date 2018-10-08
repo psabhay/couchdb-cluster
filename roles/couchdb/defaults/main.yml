@@ -1,0 +1,22 @@
+---
+# defaults file for couchdb
+couchdb_version: "2.2.0"
+cluster_setup: True
+host_local_url: "http://localhost:5984/"
+admin_password: "superpass"
+cluster_cookie: "supersecret"
+couchdb_apt_key_url: "https://couchdb.apache.org/repo/bintray-pubkey.asc"
+hosts_count: "{{ groups['couchdb'] | length }}"
+cordinator_node: "{{ groups['couchdb'][0]}}"
+
+# When install with apt, following are the locations
+couchdb_install_folder: '/opt/couchdb'
+couchdb_config_folder: '/opt/couchdb/etc'
+couchdb_data_folder: '/var/lib/couchdb'
+couchdb_log_folder: '/var/log/couchdb'
+
+# when installed with apt, user and group will be created automatically
+couchdb_user: 'couchdb'
+couchdb_group: 'couchdb'
+
+

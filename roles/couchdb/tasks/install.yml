@@ -1,0 +1,50 @@
+---
+
+- name: Add couchdb Apt signing key
+  apt_key:
+    url: "https://couchdb.apache.org/repo/bintray-pubkey.asc"
+    state: present
+
+- apt_repository:
+    repo: "deb https://apache.bintray.com/couchdb-deb {{ ansible_distribution_release }} main"
+    state: present
+    filename: couchdb
+
+- name: Install Couchdb package
+  apt:
+    name: couchdb
+    state: present
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: stop couchdb service before changing config
+  systemd:
+    name: couchdb
+    state: stopped
+    enabled: True
+
+- name: Put the local.ini file on couchdb server
+  template:
+    src: local.ini.j2
+    dest: "{{ couchdb_config_folder }}/local.d/custom.ini"
+    owner: couchdb
+    group: couchdb
+    mode: 0644
+
+- name: Put the vm.args file on couchdb server
+  template:
+    src: vm.args.j2
+    dest: "{{ couchdb_config_folder }}/vm.args"
+    owner: couchdb
+    group: couchdb
+    mode: 0644
+
+- name: Start couchdb service and ensure it's running
+  systemd:
+    name: couchdb
+    state: started
+    enabled: True
+
+- name: Configure couchdb cluster
+  include: couchdb_cluster_setup.yml
+  when: (cluster_setup == True)  and ( hosts_count | int > 1 ) 

@@ -1,0 +1,53 @@
+---
+
+- name: enable the cluster
+  uri:
+    url: "http://{{cordinator_node}}:5984/_cluster_setup"
+    body: "{{ lookup('template','enable_cluster.json')}}"
+    status_code: 201
+    headers:
+      Content-Type: "application/json"
+    user: admin
+    password: "{{ admin_password }}"
+    method: POST
+    body_format: json
+    force_basic_auth: yes
+  when:
+    - inventory_hostname == "{{ groups['couchdb'][0] }}"
+  register: cluster_status
+  ignore_errors: true  
+# when: inventory_hostname == "{{ groups.couches[0] }}" 
+
+- name: add nodes to the cluster
+  uri:
+    url: "http://{{cordinator_node}}:5984/_cluster_setup"
+    body: "{{ lookup('template','add_node.json')}}"
+    status_code: 201,409
+    headers:
+      Content-Type: "application/json"
+    user: admin
+    password: "{{ admin_password }}"
+    method: POST
+    body_format: json
+    force_basic_auth: yes
+  with_items: "{{ groups['couchdb'] }}"
+  when:
+    - inventory_hostname == "{{ groups['couchdb'][0] }}"
+    - inventory_hostname != item
+    - cluster_status.json.reason == "Cluster is already enabled"
+
+- name: finish the cluster
+  uri:
+    url: "http://{{cordinator_node}}:5984/_cluster_setup"
+    body: '{"action":"finish_cluster"}'
+    status_code: 201
+    headers:
+      Content-Type: "application/json"
+    user: admin
+    password: "{{ admin_password }}"
+    method: POST
+    body_format: json
+    force_basic_auth: yes
+  when:
+    - inventory_hostname == "{{ groups['couchdb'][0] }}"
+    - cluster_status.json.reason == "Cluster is already enabled"

@@ -1,0 +1,7 @@
+{
+    "action": "enable_cluster",
+    "bind_address": "0.0.0.0",
+    "username": "admin",
+    "password": "{{ admin_password }}",
+    "node_count": "{{ hosts_count }}"
+}

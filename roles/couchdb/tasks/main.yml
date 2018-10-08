@@ -1,0 +1,23 @@
+---
+# tasks file for couchdb
+
+- name: Check if couchdb installed
+  systemd:
+    name: couchdb
+    state: started
+    enabled: True
+  register: couchdb_service_status
+  ignore_errors: True
+
+- name: Get couchdb version
+  uri:
+    url: "{{ host_url }}"
+    return_content: yes
+    headers:
+      Content-Type: "application/json"
+  ignore_errors: true
+  when: couchdb_service_status.failed == False
+
+- name: Install couchdb if not install or not the same version
+  include: install.yml
+  when: couchdb_service_status.failed == True
