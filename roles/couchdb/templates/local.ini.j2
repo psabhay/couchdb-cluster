@@ -7,6 +7,6 @@ bind_address = 0.0.0.0
 {% if cluster_setup == True -%}
 [cluster]
 q=8
-n=2
+n={{ hosts_count }}
 {%- endif %}
 

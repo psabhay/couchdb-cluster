@@ -1,0 +1,7 @@
+{
+  "action": "add_node", 
+  "host": "{{ item }}", 
+  "port": 5984, 
+  "username": "admin", 
+  "password": "{{ admin_password }}"
+}

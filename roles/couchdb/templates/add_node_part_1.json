@@ -1,0 +1,11 @@
+{
+  "action": "enable_cluster", 
+  "bind_address":"0.0.0.0", 
+  "username": "admin", 
+  "password": "{{ admin_password }}", 
+  "port": 5984, 
+  "node_count": "{{ hosts_count }}", 
+  "remote_node": "{{ item }}", 
+  "remote_current_user": "admin", 
+  "remote_current_password": "{{ admin_password }}" 
+}
