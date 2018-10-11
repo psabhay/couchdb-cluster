@@ -15,6 +15,7 @@
   apt:
     name:   "couchdb={{ couchdb_version }}~{{ ansible_distribution_release }}"
     state:  present
+    update_cache: yes
   environment:
     DEBIAN_FRONTEND: noninteractive
 
@@ -68,7 +69,7 @@
     state:    stopped
     enabled:  True
 
-- name: Change erlang node name 
+- name: Change erlang node name
   lineinfile:
     path:     "{{ couchdb_config_folder }}/vm.args"
     regexp:   '^\-name couchdb@127.0.0.1'
@@ -103,4 +104,4 @@
 
 - name:    Configure couchdb cluster
   include: couchdb_cluster_setup.yml
-  when:    (cluster_setup == True)  and ( hosts_count | int > 1 ) 
+  when:    (cluster_setup == True)  and ( hosts_count | int > 1 )
