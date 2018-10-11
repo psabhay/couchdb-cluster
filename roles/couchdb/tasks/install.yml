@@ -1,5 +1,8 @@
 ---
 
+- include_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
 - name: Add couchdb Apt signing key
   apt_key:
     url:    "http://couchdb.apache.org/repo/bintray-pubkey.asc"
@@ -7,7 +10,7 @@
 
 - name: Add apt repo for couchdb
   apt_repository:
-    repo:     "deb https://apache.bintray.com/couchdb-deb {{ ansible_distribution_release }} main"
+    repo:     "deb http://apache.bintray.com/couchdb-deb {{ ansible_distribution_release }} main"
     state:    present
     filename: couchdb
 
