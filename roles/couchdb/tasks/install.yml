@@ -2,7 +2,7 @@
 
 - name: Add couchdb Apt signing key
   apt_key:
-    url:    "https://couchdb.apache.org/repo/bintray-pubkey.asc"
+    url:    "http://couchdb.apache.org/repo/bintray-pubkey.asc"
     state:  present
 
 - name: Add apt repo for couchdb
@@ -20,7 +20,7 @@
     DEBIAN_FRONTEND: noninteractive
 
 - name: Stop couchdb service before changing config
-  systemd:
+  service:
     name:     couchdb
     state:    stopped
     enabled:  True
@@ -42,7 +42,7 @@
     mode:   0755
 
 - name: Start couchdb service and ensure it's running
-  systemd:
+  service:
     name:     couchdb
     state:    started
     enabled:  True

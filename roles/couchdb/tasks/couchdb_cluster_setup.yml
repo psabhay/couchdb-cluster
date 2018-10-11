@@ -19,7 +19,7 @@
 
 
 - name: stop couchdb service before changing config
-  systemd:
+  service:
     name:     couchdb
     state:    stopped
     enabled:  True
@@ -34,7 +34,7 @@
     mode:     0755
 
 - name: Start couchdb service and ensure it's running
-  systemd:
+  service:
     name:     couchdb
     state:    started
     enabled:  True

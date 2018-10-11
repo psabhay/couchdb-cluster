@@ -2,7 +2,7 @@
 # tasks file for couchdb
 
 - name: Check if couchdb installed
-  systemd:
+  service:
     name:         couchdb
     state:        started
     enabled:      True
