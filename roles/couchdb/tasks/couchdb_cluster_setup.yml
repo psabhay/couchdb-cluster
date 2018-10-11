@@ -1,19 +1,68 @@
 ---
 
-- name: enable the cluster
+- name: delete existing system dbs
   uri:
-    url:              "http://localhost:5984/_cluster_setup"
-    body:             "{{ lookup('template','enable_cluster.json')}}"
-    status_code:      201
+    url:              "http://localhost:5984/{{ item }}"
+    method:           DELETE
     headers:
       Content-Type:   "application/json"
     user:             admin
     password:         "{{ admin_password }}"
-    method:           POST
-    body_format:      json
     force_basic_auth: yes
-  register:      cluster_status
-  ignore_errors: true  
+    status_code:      200,404,202
+  ignore_errors:      true
+  register: db_deletion
+  with_items:
+    - "_global_changes"
+    - "_replicator"
+    - "_users"
+
+
+- name: stop couchdb service before changing config
+  systemd:
+    name:     couchdb
+    state:    stopped
+    enabled:  True
+
+- name: Change erlang node name
+  lineinfile:
+    path:     "{{ couchdb_config_folder }}/vm.args"
+    regexp:   '^\-name couchdb@127.0.0.1'
+    line:     "-name couchdb@{{ inventory_hostname }}"
+    owner:    "{{ couchdb_user }}"
+    group:    "{{ couchdb_group }}"
+    mode:     0755
+
+- name: Start couchdb service and ensure it's running
+  systemd:
+    name:     couchdb
+    state:    started
+    enabled:  True
+
+- name: wait for couchdb port to start listening
+  wait_for:
+    host:     127.0.0.1
+    port:     5984
+    timeout:  120
+
+- name: Create system dbs
+  uri:
+    url:              "http://localhost:5984/{{ item }}"
+    method:           PUT
+    headers:
+      Content-Type:   "application/json"
+    user:             admin
+    password:         "{{ admin_password }}"
+    force_basic_auth: yes
+    status_code:      201,412,202
+    timeout:          10
+  ignore_errors:      true
+  register: db_creation
+  with_items:
+    - "_global_changes"
+    - "_replicator"
+    - "_users"
+    - "test"
 
 - name: add nodes to the cluster - PART 1
   uri:
@@ -48,18 +97,3 @@
   when:
     - inventory_hostname == groups['couchdb'][0]
     - inventory_hostname != item
-
-- name: finish the cluster
-  uri:
-    url:              "http://localhost:5984/_cluster_setup"
-    body:             '{"action":"finish_cluster"}'
-    status_code:      201,400
-    headers:
-      Content-Type:   "application/json"
-    user:             admin
-    password:         "{{ admin_password }}"
-    method:           POST
-    body_format:      json
-    force_basic_auth: yes
-  when:
-    - inventory_hostname == groups['couchdb'][0]

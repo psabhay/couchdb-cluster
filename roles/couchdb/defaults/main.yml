@@ -1,7 +1,7 @@
 ---
 # defaults file for couchdb
 couchdb_version:      "2.2.0"
-cluster_setup:        True
+cluster_setup:        False
 admin_password:       "superpass"
 cluster_cookie:       "supersecret"
 couchdb_apt_key_url:  "https://couchdb.apache.org/repo/bintray-pubkey.asc"
@@ -17,5 +17,3 @@ couchdb_log_folder:     '/var/log/couchdb'
 # when installed with apt, user and group will be created automatically
 couchdb_user:   'couchdb'
 couchdb_group:  'couchdb'
-
-
